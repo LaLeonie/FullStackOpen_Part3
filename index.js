@@ -8,8 +8,16 @@ let persons = [
   { name: "Mary Poppendiek", number: "39-23-64512323", id: 4 },
 ];
 
+const infoHTML = `phonebook has info for ${
+  persons.length
+} people </br>  </br>${new Date()}`;
+
 app.get("/api/persons", (req, res) => {
   res.json(persons);
+});
+
+app.get("/info", (req, res) => {
+  res.send(infoHTML);
 });
 
 const PORT = 3001;
