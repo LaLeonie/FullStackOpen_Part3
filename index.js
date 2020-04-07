@@ -56,10 +56,11 @@ app.post("/api/persons", (req, res) => {
   }
 
   const person = {
-    content: body.content,
+    name: body.content.name,
+    number: body.content.number,
     id: generateId(),
   };
-
+  console.log(person);
   persons = persons.concat(person);
   res.json(person);
 });
