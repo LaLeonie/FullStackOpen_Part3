@@ -1,6 +1,8 @@
 const express = require("express");
 const app = express();
 
+app.use(express.json());
+
 let persons = [
   { name: "Arto Hellas", number: "040-1234567", id: 1 },
   { name: "Ada Lovelace", number: "39-44-53235223", id: 2 },
@@ -13,6 +15,11 @@ const infoHTML = `phonebook has info for ${
 } people </br>  </br>${new Date()}`;
 
 const errorHTML = `<h1>This page does not exist</h1>`;
+
+const generateId = () => {
+  const min = persons.length + 1;
+  return Math.floor(Math.random() * (100 - min) + min);
+};
 
 app.get("/api/persons/:id", (req, res) => {
   const id = Number(req.params.id);
@@ -40,6 +47,21 @@ app.get("/api/persons/:id", (req, res) => {
   } else {
     res.status(400).send(errorHTML).end();
   }
+});
+
+app.post("/api/persons", (req, res) => {
+  const body = req.body;
+  if (!body.content) {
+    return res.status(400).json({ error: "content missing" });
+  }
+
+  const person = {
+    content: body.content,
+    id: generateId(),
+  };
+
+  persons = persons.concat(person);
+  res.json(person);
 });
 
 app.delete("/api/persons/:id", (req, res) => {
