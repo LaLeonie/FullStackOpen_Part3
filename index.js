@@ -53,6 +53,10 @@ app.post("/api/persons", (req, res) => {
   const body = req.body;
   if (!body.content) {
     return res.status(400).json({ error: "content missing" });
+  } else if (!body.content.name || !body.content.number) {
+    return res.status(400).json({ error: "not enough content provided" });
+  } else if (persons.find((p) => p.name === body.content.name)) {
+    return res.status(400).json({ error: "must be unique" });
   }
 
   const person = {
@@ -60,7 +64,6 @@ app.post("/api/persons", (req, res) => {
     number: body.content.number,
     id: generateId(),
   };
-  console.log(person);
   persons = persons.concat(person);
   res.json(person);
 });
