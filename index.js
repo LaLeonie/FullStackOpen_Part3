@@ -12,12 +12,36 @@ const infoHTML = `phonebook has info for ${
   persons.length
 } people </br>  </br>${new Date()}`;
 
+const errorHTML = `<h1>This page does not exist</h1>`;
+
+app.get("/api/persons/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const person = persons.find((p) => id === p.id);
+  if (person) {
+    res.json(person);
+  } else {
+    res.status(400).send(errorHTML).end();
+  }
+});
+
 app.get("/api/persons", (req, res) => {
   res.json(persons);
 });
 
 app.get("/info", (req, res) => {
   res.send(infoHTML);
+});
+
+app.get("/api/persons/4", (req, res) => {
+  const id = request.params.id;
+  console.log(id);
+  const person = persons.find((p) => id == p.id);
+  res.json(notes);
+  //   if (person) {
+  //     res.json(person);
+  //   } else {
+  //     res.status(400).end();
+  //   }
 });
 
 const PORT = 3001;
