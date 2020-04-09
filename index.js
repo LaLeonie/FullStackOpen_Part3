@@ -3,6 +3,10 @@ const morgan = require("morgan");
 
 const app = express();
 
+morgan.token("type", function (req, res) {
+  return JSON.stringify(req.body.content);
+});
+app.use(morgan(":method :url :status :response-time ms :type"));
 app.use(morgan("tiny"));
 app.use(express.json());
 
