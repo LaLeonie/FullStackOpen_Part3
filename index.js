@@ -14,6 +14,14 @@ app.use(express.json());
 
 app.use(cors());
 
+app.use(express.static("build"));
+
+if (process.env.NODE_ENV === "production") {
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "build", "index.html"));
+  });
+}
+
 let persons = [
   { name: "Arto Hellas", number: "040-1234567", id: 1 },
   { name: "Ada Lovelace", number: "39-44-53235223", id: 2 },
