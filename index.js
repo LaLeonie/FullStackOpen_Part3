@@ -22,10 +22,6 @@ let persons = [
   { name: "Mary Poppendiek", number: "39-23-64512323", id: 4 },
 ];
 
-const infoHTML = `phonebook has info for ${
-  persons.length
-} people </br>  </br>${new Date()}`;
-
 const errorHTML = `<h1>This page does not exist</h1>`;
 
 const generateId = () => {
@@ -40,7 +36,13 @@ app.get("/persons", (req, res) => {
 });
 
 app.get("/info", (req, res) => {
-  res.send(infoHTML);
+  Person.find({}).then((persons) => {
+    res.send(
+      `<p>phonebook has info for ${
+        persons.length
+      } people </p><p>${new Date()}</p>`
+    );
+  });
 });
 
 app.get("/persons/:id", (req, res, next) => {
