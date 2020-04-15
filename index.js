@@ -49,7 +49,7 @@ app.get("/persons/:id", (req, res) => {
       if (person) {
         res.json(person.toJSON());
       } else {
-        res.status(400).end();
+        res.status(404).end();
       }
     })
     .catch((error) => {
