@@ -44,9 +44,14 @@ app.get("/info", (req, res) => {
 });
 
 app.get("/persons/:id", (req, res) => {
-  Person.findById(req.params.id).then((person) => {
-    response.json(person.toJSON());
-  });
+  Person.findById(req.params.id)
+    .then((person) => {
+      response.json(person.toJSON());
+    })
+    .catch((error) => {
+      console.log(error);
+      response.status(400).end();
+    });
 });
 
 app.post("/persons", (req, res) => {
