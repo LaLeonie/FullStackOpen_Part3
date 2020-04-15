@@ -54,25 +54,46 @@ app.get("/persons/:id", (req, res, next) => {
     })
     .catch((error) => {
       next(error);
-      // console.log(error);
-      // res.status(400).send({ error: "malformatted id" });
     });
 });
 
 app.post("/persons", (req, res) => {
   const body = req.body;
+  console.log(body);
+
+  if (body.name == "" || body.number == "") {
+    return res.status(400).json({ error: "content missing" });
+  }
+
   const person = new Person({
     name: body.name,
     number: body.number,
   });
 
-  person.save().then((savedPerson) => res.json(savedPerson.toJSON()));
+  person.save().then((savedPerson) => {
+    res.json(savedPerson.toJSON());
+  });
 });
 
 app.delete("/persons/:id", (req, res, next) => {
   Person.findByIdAndDelete(req.params.id)
     .then((result) => {
       res.status(204).end();
+    })
+    .catch((error) => next(error));
+});
+
+app.put("/persons/:id", (req, res, next) => {
+  const body = req.body;
+
+  const person = {
+    name: body.name,
+    number: body.number,
+  };
+
+  Person.findByIdAndUpdate(req.params.id, person, { new: true })
+    .then((updatedPerson) => {
+      res.json(updatedPerson.toJSON());
     })
     .catch((error) => next(error));
 });
@@ -84,8 +105,8 @@ const unknownEndpoint = (req, res) => {
 app.use(unknownEndpoint);
 
 const errorHandler = (error, req, res, next) => {
-  console.log(error.message);
-  if (error.name === "CastError" && error.kind === "ObjectId") {
+  console.log({ message: error.message, name: error.name, kind: error.kind });
+  if (error.name === "CastError") {
     return res.status(400).send({ error: "malformatted id" });
   }
 
@@ -93,6 +114,7 @@ const errorHandler = (error, req, res, next) => {
 };
 
 app.use(errorHandler);
+
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
