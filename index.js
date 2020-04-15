@@ -43,7 +43,7 @@ app.get("/info", (req, res) => {
   res.send(infoHTML);
 });
 
-app.get("/persons/:id", (req, res) => {
+app.get("/persons/:id", (req, res, next) => {
   Person.findById(req.params.id)
     .then((person) => {
       if (person) {
@@ -53,8 +53,9 @@ app.get("/persons/:id", (req, res) => {
       }
     })
     .catch((error) => {
-      console.log(error);
-      res.status(400).send({ error: "malformatted id" });
+      next(error);
+      // console.log(error);
+      // res.status(400).send({ error: "malformatted id" });
     });
 });
 
@@ -68,15 +69,12 @@ app.post("/persons", (req, res) => {
   person.save().then((savedPerson) => res.json(savedPerson.toJSON()));
 });
 
-app.delete("/persons/:id", (req, res) => {
-  const id = Number(req.params.id);
-  const person = persons.find((p) => id === p.id);
-  persons = persons.filter((p) => p.id !== id);
-  if (person) {
-    res.status(204).end();
-  } else {
-    res.status(404).send(errorHTML).end();
-  }
+app.delete("/persons/:id", (req, res, next) => {
+  Person.findByIdAndDelete(req.params.id)
+    .then((result) => {
+      res.status(204).end();
+    })
+    .catch((error) => next(error));
 });
 
 const PORT = process.env.PORT;
