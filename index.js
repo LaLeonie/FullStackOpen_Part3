@@ -77,6 +77,22 @@ app.delete("/persons/:id", (req, res, next) => {
     .catch((error) => next(error));
 });
 
+const unknownEndpoint = (req, res) => {
+  res.status(400).send({ error: "unknown endpoint" });
+};
+
+app.use(unknownEndpoint);
+
+const errorHandler = (error, req, res, next) => {
+  console.log(error.message);
+  if (error.name === "CastError" && error.kind === "ObjectId") {
+    return res.status(400).send({ error: "malformatted id" });
+  }
+
+  next(error);
+};
+
+app.use(errorHandler);
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
