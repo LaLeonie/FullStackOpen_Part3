@@ -1,20 +1,25 @@
 const mongoose = require("mongoose");
+const uniqueValidator = require("mongoose-unique-validator");
 
 if (process.argv.length < 3) {
   console.log("give password as argument");
   process.exit(1);
 }
 
-const password = process.argv[2];
-
 const url = `mongodb+srv://leonie_lea_january:${password}@cluster0-nosdz.mongodb.net/test?retryWrites=true&w=majority`;
 
-mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(url, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useCreateIndex: true,
+});
 
 const personSchema = new mongoose.Schema({
-  name: String,
-  number: Number,
+  name: { type: String, required: true, unique: true },
+  number: { type: Number, unique: true, required: true },
 });
+
+personSchema.plugin(uniqueValidator);
 
 const Person = mongoose.model("Person", personSchema);
 
