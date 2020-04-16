@@ -15,20 +15,6 @@ app.use(express.json());
 app.use(cors());
 app.use(express.static("build"));
 
-let persons = [
-  { name: "Arto Hellas", number: "040-1234567", id: 1 },
-  { name: "Ada Lovelace", number: "39-44-53235223", id: 2 },
-  { name: "Dan Abramov", number: "12-34-345345", id: 3 },
-  { name: "Mary Poppendiek", number: "39-23-64512323", id: 4 },
-];
-
-const errorHTML = `<h1>This page does not exist</h1>`;
-
-const generateId = () => {
-  const min = persons.length + 1;
-  return Math.floor(Math.random() * (100 - min) + min);
-};
-
 app.get("/persons", (req, res) => {
   Person.find({}).then((persons) => {
     res.json(persons.map((person) => person.toJSON()));
@@ -55,6 +41,7 @@ app.get("/persons/:id", (req, res, next) => {
       }
     })
     .catch((error) => {
+      console.log("app.get by id error");
       next(error);
     });
 });
@@ -111,7 +98,6 @@ const errorHandler = (error, req, res, next) => {
   if (error.name === "CastError") {
     return res.status(400).send({ error: "malformatted id" });
   }
-
   next(error);
 };
 
