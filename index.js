@@ -31,7 +31,6 @@ const generateId = () => {
 
 app.get("/persons", (req, res) => {
   Person.find({}).then((persons) => {
-    console.log(persons);
     res.json(persons.map((person) => person.toJSON()));
   });
 });
@@ -62,7 +61,6 @@ app.get("/persons/:id", (req, res, next) => {
 
 app.post("/persons", (req, res, next) => {
   const body = req.body;
-  console.log("this is the body", body);
 
   if (body.name == "" || body.number == "") {
     return res.status(400).json({ error: "content missing" });
@@ -75,11 +73,11 @@ app.post("/persons", (req, res, next) => {
 
   person
     .save()
-    .then((savedPerson) => {
-      res.json(savedPerson.toJSON());
+    .then((savedPerson) => savedPerson.toJSON())
+    .then((savedAndFormattedPerson) => {
+      res.json(savedAndFormattedPerson);
     })
     .catch((error) => {
-      console.log("this is the error", error);
       next(error);
     });
 });
@@ -119,7 +117,6 @@ const errorHandler = (error, req, res, next) => {
   } else if (error.name === "ValidationError") {
     return res.status(400).json({ error: error.message });
   }
-
   next(error);
 };
 
